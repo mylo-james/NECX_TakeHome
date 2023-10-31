@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "main": "index.mjs",
   "scripts": {
-    "start": "node index.mjs",
+    "start": "NODE_ENV=production node index.mjs",
     "lint": "eslint .",
     "format": "prettier --single-quote --check .",
     "prepare": "cd ../ && husky install server/.husky",
-    "dev": "nodemon index.mjs"
+    "dev": "NODE_ENV=development nodemon index.mjs",
+    "seed": "NODE_ENV=development node db/seed.mjs"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.18.2",
