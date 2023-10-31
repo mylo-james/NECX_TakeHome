@@ -3,19 +3,11 @@ version: "3.7"
 services:
   mongo:
     image: mongo
-    env_file: ./server/db/.env
+    env_file: ./server/.env.production
     volumes:
       - data-volume:/data/db
     ports:
       - "27017:27017"
-    networks:
-      - todo-network
-  mongo-seed:
-    build:
-      context: ./server/db
-      dockerfile: Dockerfile
-    depends_on:
-      - mongo
     networks:
       - todo-network
   server:
@@ -24,17 +16,16 @@ services:
       dockerfile: server/Dockerfile
     image: todo-server
     container_name: todo-node-server
-    command: /usr/src/app/node_modules/.bin/nodemon server.js
+    command: npm run start
     volumes:
       - ./server/:/usr/src/app
-      - /usr/src/app/node_modules
     ports:
       - "5050:5050"
     depends_on:
       - mongo
-    env_file: ./server/.env
+    env_file: ./server/.env.production
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
     networks:
       - todo-network
   client:

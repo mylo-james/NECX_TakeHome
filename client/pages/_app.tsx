@@ -1,22 +1,16 @@
+import { useContext } from "react";
 import type { AppProps } from "next/app";
-import AppContext from "../context";
+import Context, { AppContext } from "../context";
 import { useCallback, useEffect } from "react";
-import { getUsers } from "../api";
+import { getSessionAPI } from "../api";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
-  const loadUser = useCallback(() => {
-    (async () => {
-      const users = await getUsers(sessionStorage.getItem("sessionId"));
-    })();
-  }, []);
-
-  useEffect(loadUser, []);
 
   return (
     <>
-      <AppContext>
+      <Context>
         <Component {...pageProps} />
-      </AppContext>
+      </Context>
     </>
   );
 }

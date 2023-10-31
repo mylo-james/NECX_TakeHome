@@ -13,7 +13,14 @@ RUN npm install --silent
 # Copy app source code
 COPY . .
 
+# Install netcat
+RUN apk update && apk add netcat-openbsd
+
+# Make the wait-for-mongo.sh script executable
+COPY ./server/db/wait-for-mongo.sh /wait-for-mongo.sh
+RUN chmod +x /wait-for-mongo.sh
+
 # Exports
 EXPOSE 5000
 
-CMD ["npm","start"]
+CMD [ "/bin/sh", "-c", "/wait-for-mongo.sh mongo && node dist/index.js && node dist/seed.js" ]
