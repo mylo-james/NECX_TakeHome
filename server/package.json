@@ -1,17 +1,19 @@
 {
   "name": "todo_backend",
   "version": "0.1.0",
-  "main": "index.mjs",
+  "main": "index.ts",
   "scripts": {
-    "start": "NODE_ENV=production node index.mjs",
-    "lint": "eslint .",
+    "start": "NODE_ENV=production ts-node index.ts",
+    "lint": "eslint . --ext .ts",
     "format": "prettier --single-quote --check .",
     "prepare": "cd ../ && husky install server/.husky",
-    "dev": "NODE_ENV=development nodemon index.mjs",
-    "seed": "NODE_ENV=development node db/seed.mjs"
+    "dev": "NODE_ENV=development nodemon --exec ts-node -- index.ts",
+    "seed": "NODE_ENV=development ts-node db/seed.ts",
+    "build": "tsc"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.18.2",
@@ -19,11 +21,18 @@
     "mongodb": "^4.13.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.5",
+    "@types/cookie-parser": "^1.4.5",
+    "@types/cors": "^2.8.15",
+    "@types/express": "^4.17.20",
+    "@types/node": "^20.8.10",
     "eslint": "^8.0.0",
     "husky": "^7.0.2",
     "lint-staged": "^11.2.3",
     "nodemon": "^2.0.12",
-    "prettier": "^2.4.1"
+    "prettier": "^2.4.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   },
   "husky": {
     "hooks": {

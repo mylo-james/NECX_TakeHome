@@ -1,18 +1,32 @@
 import faker from "faker";
 import bcrypt from "bcryptjs";
-import db from "./conn.mjs";
+import db from "../conn.mjs";
+import { Collection, ObjectId } from "mongodb";
+
+interface User {
+  _id?: ObjectId;
+  email: string;
+  pwHash: string;
+}
+
+interface Task {
+  _id?: ObjectId;
+  title: string;
+  completed: boolean;
+  userId: ObjectId;
+}
 
 const saltRounds = 10;
 
 async function seed() {
-  const usersCollection = await db.collection("users");
-  const tasksCollection = await db.collection("tasks");
+  const usersCollection: Collection<User> = await db.collection("users");
+  const tasksCollection: Collection<Task> = await db.collection("tasks");
 
   await usersCollection.drop();
   await tasksCollection.drop();
 
-  for (let i = 0; i <= 4; i++) {
-    const user = !i
+  for (let i: number = 0; i <= 4; i++) {
+    const user: User = !i
       ? {
           email: "demo@user.com",
           pwHash: await bcrypt.hash("password", saltRounds),
@@ -23,8 +37,8 @@ async function seed() {
         };
     const result = await usersCollection.insertOne(user);
 
-    for (let j = 1; j <= 5; j++) {
-      const task = {
+    for (let j: number = 1; j <= 5; j++) {
+      const task: Task = {
         title: `${faker.company.bsBuzz()} ${faker.company.bsNoun()}`,
         completed: faker.datatype.boolean(),
         userId: result.insertedId,
@@ -34,6 +48,8 @@ async function seed() {
   }
 
   console.log("Database seeded!");
+  process.exit();
 }
 
 seed().catch(console.error);
+
