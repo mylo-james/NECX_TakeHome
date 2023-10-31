@@ -1,0 +1,65 @@
+version: "3.7"
+
+services:
+  mongo:
+    image: mongo
+    env_file: ./server/db/.env
+    volumes:
+      - data-volume:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - todo-network
+  mongo-seed:
+    build:
+      context: ./server/db
+      dockerfile: Dockerfile
+    depends_on:
+      - mongo
+    networks:
+      - todo-network
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    image: todo-server
+    container_name: todo-node-server
+    command: /usr/src/app/node_modules/.bin/nodemon server.js
+    volumes:
+      - ./server/:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "5050:5050"
+    depends_on:
+      - mongo
+    env_file: ./server/.env
+    environment:
+      - NODE_ENV=development
+    networks:
+      - todo-network
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: myapp-client
+    container_name: myapp-react-client
+    command: npm start
+    volumes:
+      - ./client/:/usr/app
+      - /usr/app/node_modules
+    depends_on:
+      - server
+    ports:
+      - "3000:3000"
+    networks:
+      - todo-network
+
+networks:
+  todo-network:
+    driver: bridge
+
+volumes:
+  data-volume:
+  node_modules:
+  web-root:
+    driver: local
