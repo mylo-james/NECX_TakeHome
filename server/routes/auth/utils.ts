@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { ObjectId } from "mongodb";
 import dbPromise from "../../conn";
 import { Session, User } from "../../types";
 /**
@@ -16,9 +17,10 @@ export const createSession = async (
   const db = await dbPromise;
   const sessionExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
   const session: Session = {
+    _id: new ObjectId(),
     userId: user._id,
     expiresAt: sessionExpiresAt,
-    userAgent: req.headers["user-agent"] as string,
+    userAgent: req.headers["user-agent"] || "",
   };
   const result = await db.collection("sessions").insertOne(session);
   const sessionId = result.insertedId;

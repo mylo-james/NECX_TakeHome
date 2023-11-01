@@ -1,24 +1,13 @@
-import faker from "faker";
+import { faker } from "@faker-js/faker";
 import bcrypt from "bcryptjs";
-import db from "../conn.mjs";
+import dbPromise from "../conn";
 import { Collection, ObjectId } from "mongodb";
-
-interface User {
-  _id?: ObjectId;
-  email: string;
-  pwHash: string;
-}
-
-interface Task {
-  _id?: ObjectId;
-  title: string;
-  completed: boolean;
-  userId: ObjectId;
-}
+import { Task, User } from "../types";
 
 const saltRounds = 10;
 
 async function seed() {
+  const db = await dbPromise;
   const usersCollection: Collection<User> = await db.collection("users");
   const tasksCollection: Collection<Task> = await db.collection("tasks");
 
@@ -26,22 +15,22 @@ async function seed() {
   await tasksCollection.drop();
 
   for (let i: number = 0; i <= 4; i++) {
-    const user: User = !i
-      ? {
-          email: "demo@user.com",
-          pwHash: await bcrypt.hash("password", saltRounds),
-        }
-      : {
-          email: faker.internet.email(),
-          pwHash: await bcrypt.hash(`password${i}`, saltRounds),
-        };
+    const user: User = {
+      _id: new ObjectId(),
+      email: i === 0 ? "demo@user.com" : faker.internet.email(),
+      pwHash: await bcrypt.hash(`password${i}`, saltRounds),
+    };
+
     const result = await usersCollection.insertOne(user);
+
+    const insertedUserId = result.insertedId;
 
     for (let j: number = 1; j <= 5; j++) {
       const task: Task = {
-        title: `${faker.company.bsBuzz()} ${faker.company.bsNoun()}`,
+        _id: new ObjectId(),
+        title: `${faker.hacker.adjective()} ${faker.hacker.noun()}`,
         completed: faker.datatype.boolean(),
-        userId: result.insertedId,
+        userId: new ObjectId(insertedUserId),
       };
       await tasksCollection.insertOne(task);
     }
@@ -52,4 +41,3 @@ async function seed() {
 }
 
 seed().catch(console.error);
-

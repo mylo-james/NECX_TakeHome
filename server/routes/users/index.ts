@@ -1,33 +1,23 @@
+// index.ts
 import express, { Request, Response } from "express";
-import { Collection, ObjectId } from "mongodb";
-import dbPromise from "../../conn";
-import { User } from "../../types";
+import { getAllUsers, getUserById, getUserByEmail } from "./dbOperations";
+import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
 router.get("/", async (_req: Request, res: Response) => {
-  const db = await dbPromise;
-  const users: User[] = (await db
-    .collection("users")
-    .find({})
-    .toArray()) as User[];
+  const users = await getAllUsers();
   res.send(users);
 });
 
 router.get("/id/:id", async (req: Request, res: Response) => {
-  const db = await dbPromise;
-  const user: User | null = (await db
-    .collection("users")
-    .findOne({ _id: new ObjectId(req.params.id) })) as User | null;
+  const user = await getUserById(new ObjectId(req.params.id));
   res.send(user);
 });
 
 router.get("/email/:email", async (req: Request, res: Response) => {
-  const db = await dbPromise;
   const email: string = decodeURIComponent(req.params.email);
-  const user: User | null = (await db
-    .collection("users")
-    .findOne({ email: email })) as User | null;
+  const user = await getUserByEmail(email);
   res.send(user);
 });
 

@@ -1,1 +1,2 @@
-declare module 'dotenv';
+declare module "dotenv";
+declare module "faker";
