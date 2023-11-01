@@ -5,8 +5,9 @@ export const AppContext = createContext(null);
 function Context({ children }) {
   const [appState, setAppState] = useState<appStateType>({
     user: null,
-    tasks: null,
+    tasks: [],
     follows: null,
+    loading: true,
   });
 
   return (

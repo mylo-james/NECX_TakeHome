@@ -3,11 +3,11 @@
 ## Requirements
 
 -MERN full-stack application.
--Authentication
--View todos
--Create todos
--Update todos
--Delete todos
+-Authentication - Done
+-View todos - Done
+-Create todos - Done
+-Update todos - Done
+-Delete todos - Done
 -View others' todos
 -Aesthetically pleasing
 -Due 11/2

@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { useRouter } from "next/router";
 import { Formik, Form, Field } from "formik";
 import validate from "./validate";
 import { loginAPI, registerAPI } from "../../api";
@@ -12,7 +13,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ register, setRegister }) => {
     confirmPassword: "",
   };
 
-  const [submitting, setSubmitting] = React.useState(false);
+  const { push } = useRouter();
   const [requirements, setRequirements] = useState<string[]>([
     "Password must be at least 8 characters long",
     "Password must contain at least one lowercase letter",
@@ -23,27 +24,24 @@ const AuthForm: React.FC<AuthFormProps> = ({ register, setRegister }) => {
   const [showPassword, setShowPassword] = useState(false);
   const { setAppState } = React.useContext(AppContext);
 
+  const refs = {
+    email: useRef<HTMLInputElement>(null),
+    password: useRef<HTMLInputElement>(null),
+    confirmPassword: useRef<HTMLInputElement>(null),
+  };
+
   const focusField = (errors) => {
-    if (errors.email) {
-      emailRef.current?.focus();
-    } else if (errors.password) {
-      passwordRef.current?.focus();
-    } else if (errors.confirmPassword) {
-      confirmPasswordRef.current?.focus();
-    }
+    const errorKey = Object.keys(errors)[0];
+    refs[errorKey]?.current?.focus();
   };
 
   const onSubmit = async ({ email, password }, { setSubmitting }) => {
-    console.log(email, password);
     const api = register ? registerAPI : loginAPI;
     const { user, tasks } = await api(email, password);
     setAppState((appState) => ({ ...appState, user, tasks }));
     setSubmitting(false);
+    push("/tasks");
   };
-
-  const emailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
-  const confirmPasswordRef = useRef<HTMLInputElement>(null);
 
   return (
     <>
@@ -53,9 +51,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ register, setRegister }) => {
           validate({
             values,
             setRequirements,
-            setSubmitting,
             focusField,
-            submitting,
             register,
           })
         }
@@ -69,13 +65,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ register, setRegister }) => {
           touched,
           handleChange,
           validateField,
-          setFieldTouched,
-          values,
         }) => (
           <Form noValidate>
             <div>
               <label htmlFor="email">Email</label>
-              <Field type="email" name="email" id="email" innerRef={emailRef} />
+              <Field
+                type="email"
+                name="email"
+                id="email"
+                innerRef={refs.email}
+              />
               {errors.email && touched.email ? <div>{errors.email}</div> : null}
             </div>
 
@@ -85,7 +84,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ register, setRegister }) => {
                 type={showPassword ? "text" : "password"}
                 name="password"
                 id="password"
-                innerRef={passwordRef}
+                innerRef={refs.password}
                 onChange={(e) => {
                   handleChange(e);
                   validateField("password");
@@ -112,7 +111,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ register, setRegister }) => {
                   type={showPassword ? "text" : "password"}
                   name="confirmPassword"
                   id="confirmPassword"
-                  innerRef={confirmPasswordRef}
+                  innerRef={refs.confirmPassword}
                 />
                 {errors.confirmPassword && touched.confirmPassword && (
                   <div className="error-text">{errors.confirmPassword}</div>
@@ -126,7 +125,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ register, setRegister }) => {
               {showPassword ? "Hide" : "Show"}
             </button>
             <button type="submit" disabled={isSubmitting}>
-              {submitting ? "Submitting..." : "Submit"}
+              {isSubmitting ? "Submitting..." : "Submit"}
             </button>
           </Form>
         )}

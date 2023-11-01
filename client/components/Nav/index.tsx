@@ -10,24 +10,13 @@ const Nav = () => {
     appState: { user },
     setAppState,
   } = useContext(AppContext);
+  const [register, setRegister] = useState(false);
   const { push } = useRouter();
-
-  const loadUser = useCallback(() => {
-    (async () => {
-      const { user, tasks } = await getSessionAPI();
-      setAppState((appState) => ({ ...appState, user, tasks }));
-    })();
-  }, []);
-
-  useEffect(loadUser, []);
-
-  const [register, setRegister] = useState(true);
   const handleSignOut = async () => {
     await signOutAPI();
     setAppState({ user: null, tasks: [], follows: [] });
     push("/");
   };
-
   return (
     <nav>
       <a href="/">Todo</a>

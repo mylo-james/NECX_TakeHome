@@ -1,16 +1,21 @@
-export interface userType {}
+import { WithId, Document, ObjectId } from "mongodb";
+export interface User extends WithId<Document> {
+  email: string;
+  pwHash: string;
+}
 
-export interface taskType {
+export interface Task extends WithId<Document> {
   title: string;
   description: string;
   completed: boolean;
-  userId: string;
+  userId: ObjectId;
 }
 
 export interface appStateType {
-  user: userType | null;
-  tasks: taskType[] | null;
-  follows: userType[] | null;
+  user: User | null;
+  tasks: Task[] | null;
+  follows: User[] | null;
+  loading: boolean;
 }
 
 export interface contextType {
@@ -37,9 +42,7 @@ export interface IValues {
 
 export interface IProps {
   values: IValues;
-  submitting: boolean;
   register: boolean;
   setRequirements: (reqs: string[]) => void;
-  setSubmitting: (submitting: boolean) => void;
   focusField: (errors: Partial<FormValues>) => void;
 }

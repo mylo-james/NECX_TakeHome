@@ -1,10 +1,10 @@
 const backendUrl: string = process.env.NEXT_PUBLIC_BACKEND_URL!;
-import { userType, taskType } from "./types";
+import { User, Task } from "./types";
 
 interface getAuthResponse {
   message: string;
-  user: userType | null;
-  tasks: taskType[] | [];
+  user: User | null;
+  tasks: Task[] | [];
 }
 
 export const getSessionAPI = async (): Promise<getAuthResponse> => {
@@ -100,5 +100,85 @@ export const signOutAPI = async (): Promise<boolean> => {
   } catch (e) {
     console.error(e);
     return false;
+  }
+};
+
+interface getTaskResponse {
+  message: string;
+  task: Task | null;
+}
+
+export const createTaskAPI = async (
+  task: Partial<Task>
+): Promise<getTaskResponse> => {
+  try {
+    const res = await fetch(`${backendUrl}/tasks/`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(task),
+    });
+    if (res.status === 200) {
+      const { message, task } = await res.json();
+      console.log(message);
+      return { task, message };
+    } else {
+      const { message } = await res.json();
+      console.error(message);
+      return { task: null, message };
+    }
+  } catch (e) {
+    console.error(e);
+    return { task: null, message: e.message };
+  }
+};
+
+export const editTaskAPI = async (task: Task): Promise<getTaskResponse> => {
+  try {
+    const res = await fetch(`${backendUrl}/tasks/${task._id}`, {
+      method: "PUT",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(task),
+    });
+    if (res.status === 200) {
+      const { message, task } = await res.json();
+      console.log(message);
+      return { task, message };
+    } else {
+      const { message } = await res.json();
+      console.error(message);
+      return { task: null, message };
+    }
+  } catch (e) {
+    console.error(e);
+    return { task: null, message: e.message };
+  }
+};
+
+export const deleteTaskAPI = async (
+  taskId: string
+): Promise<getTaskResponse> => {
+  try {
+    const res = await fetch(`${backendUrl}/tasks/${taskId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (res.status === 200) {
+      const { message, task } = await res.json();
+      console.log(message);
+      return { task, message };
+    } else {
+      const { message } = await res.json();
+      console.error(message);
+      return { task: null, message };
+    }
+  } catch (e) {
+    console.error(e);
+    return { task: null, message: e.message };
   }
 };
