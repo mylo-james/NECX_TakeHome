@@ -24,13 +24,14 @@ services:
       - NODE_ENV=production
   server:
     build:
-      context: .
-      dockerfile: server/Dockerfile
+      context: ./server
+      dockerfile: Dockerfile
     image: todo-server
     container_name: todo-node-server
     command: npm run start
     volumes:
       - ./server/:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
       - "5050:5050"
     depends_on:

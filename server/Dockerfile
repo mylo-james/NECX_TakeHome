@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 
 # Install Dependencies
-COPY ./server/package*.json ./
+COPY package*.json ./
 
 RUN npm install
 
