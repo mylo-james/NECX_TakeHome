@@ -1,0 +1,15 @@
+{
+  "name": "db",
+  "version": "1.0.0",
+  "description": "Database module for the application",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^8.2.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^10.0.0",
+    "mongodb": "^4.1.2"
+  }
+}

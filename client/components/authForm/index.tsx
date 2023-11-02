@@ -23,8 +23,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
   onClose,
 }) => {
   const initialValues: FormValues = {
-    email: "",
-    password: "",
+    email: "demo@user.com",
+    password: "Password#0",
     confirm: "",
   };
 
@@ -57,7 +57,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   const onSubmit = async ({ email, password }, { setSubmitting }) => {
     const api = register ? registerAPI : loginAPI;
     const { user, tasks, message } = await api(email, password);
-    toast(message)
+    toast(message);
     setAppState((appState) => ({ ...appState, user, tasks }));
     setSubmitting(false);
     if (user) {

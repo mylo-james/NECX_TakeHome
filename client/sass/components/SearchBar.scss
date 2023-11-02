@@ -1,61 +1,3 @@
-.search-bar {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
-
-  button {
-    height: 30px;
-    width: 30px;
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    &:focus,
-    &:hover {
-      border: 1px solid #0070f3;
-    }
-  }
-}
-
-.search-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  max-height: 200px;
-  overflow-y: auto;
-  background-color: $color-n1;
-  color: $color-black;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 1;
-  overflow: hidden;
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-
-    li {
-      padding: 10px;
-      font-size: 16px;
-      transition: background-color 0.2s ease-in-out;
-
-      &:hover {
-        cursor: pointer;
-        background-color: #f5f5f5;
-      }
-    }
-  }
-}
-
 .nav {
   display: flex;
   justify-content: space-between;
@@ -66,10 +8,10 @@
   font-size: 1.2rem;
   width: 100vw;
   .logo {
+    width: 100px;
     display: flex;
     justify-content: center;
-    width: 210px;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: bold;
     text-decoration: none;
     color: $color-white;
@@ -78,18 +20,73 @@
       text-decoration: none;
     }
   }
+  .no-user-logo {
+    width: 100%;
+  }
   form {
     width: 210px;
   }
-  .search-bar {
-    width: 210px;
-    flex-grow: 1;
-    margin: 0 1rem;
-  }
+
   .signOut-container {
     width: 210px;
     display: flex;
     justify-content: flex-start;
     margin: 0 1rem;
+  }
+  .search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 210px;
+    margin: 0 auto;
+
+    button {
+      height: 30px;
+      width: 30px;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      &:focus,
+      &:hover {
+        border: 1px solid #0070f3;
+      }
+    }
+  }
+
+  .search-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: $color-n1;
+    color: $color-black;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    overflow: hidden;
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+
+      li {
+        padding: 10px;
+        font-size: 16px;
+        transition: background-color 0.2s ease-in-out;
+
+        &:hover {
+          cursor: pointer;
+          background-color: #f5f5f5;
+        }
+      }
+    }
   }
 }

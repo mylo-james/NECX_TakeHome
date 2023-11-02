@@ -7,8 +7,8 @@
     "lint": "eslint . --ext .ts",
     "format": "prettier --single-quote --check .",
     "prepare": "cd ../ && husky install server/.husky",
-    "dev": "NODE_ENV=development nodemon --exec ts-node -- index.ts",
-    "seed": "NODE_ENV=development ts-node db/seed.ts",
+    "dev": "NODE_ENV=development DB_URI=mongodb://localhost:27017 nodemon --exec ts-node -- index.ts",
+    "seed": "NODE_ENV=development DB_URI=mongodb://localhost:27017 node db/seed.mjs",
     "build": "tsc"
   },
   "dependencies": {

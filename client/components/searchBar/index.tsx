@@ -10,6 +10,7 @@ import { AppContext } from "../../context";
 import { useRouter } from "next/router";
 import { User } from "../../types";
 import { searchUsersAPI } from "../../api";
+import classNames from "classnames";
 
 const SearchBar: React.FC = () => {
   const [query, setQuery] = useState<string>("");
@@ -21,21 +22,17 @@ const SearchBar: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const handleClickInside = (event: MouseEvent) => {
-      setShowDropdown(true);
-    };
     const handleOutsideClick = (event: MouseEvent) => {
-      setShowDropdown(false);
+      const dropdown = document.getElementById("dropdown");
+      if (!dropdown?.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
     };
 
     document.addEventListener("mousedown", handleOutsideClick);
-    document;
-    inputRef.current?.addEventListener("click", handleClickInside);
 
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
-      document;
-      inputRef.current?.addEventListener("click", handleClickInside);
     };
   }, []);
 
@@ -46,6 +43,7 @@ const SearchBar: React.FC = () => {
   };
 
   const handleSelect = (email: string) => {
+    console.log("clicked");
     const encodedEmail = encodeURIComponent(email);
     router.push(`/users/${encodedEmail}`);
     setShowDropdown(false);
@@ -83,7 +81,7 @@ const SearchBar: React.FC = () => {
 
   return (
     <nav className="nav">
-      <a href="/" className={"logo"}>
+      <a href="/" className={classNames("logo", !user ? "no-user-logo" : "")}>
         Todo
       </a>
       {user && (
@@ -106,9 +104,9 @@ const SearchBar: React.FC = () => {
               <i className="fa-solid fa-magnifying-glass"></i>
             </button>
             {showDropdown && (
-              <div className="search-dropdown">
+              <div id="dropdown" className="search-dropdown">
                 <ul>
-                  {results.map((result, i) => (
+                  {results.map((result) => (
                     <li
                       id={`search-dropdown-item-${result.email}`}
                       key={result.id}
