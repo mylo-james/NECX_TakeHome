@@ -38,6 +38,7 @@ function TasksPage() {
       <Button className="add-task-button" onClick={() => setShowModal(true)}>
         Add Task
       </Button>
+      <h1>My Tasks</h1>
       {showModal && <TaskModal onClose={() => setShowModal(false)} />}
       {tasks.length > 0 ? (
         <TaskList tasks={tasks} self />
