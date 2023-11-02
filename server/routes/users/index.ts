@@ -5,9 +5,14 @@ import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
-router.get("/", async (_req: Request, res: Response) => {
-  const users = await getAllUsers();
-  res.send(users);
+router.get("/", async (req: Request, res: Response) => {
+  const searchTerm = String(req.query.searchTerm) || "";
+  const users = await getAllUsers(searchTerm);
+  if (users.length === 0) {
+    res.status(404).json({ message: "No Users Found", users: [] });
+  } else {
+    res.json({ message: "Users Found", users });
+  }
 });
 
 router.get("/id/:id", async (req: Request, res: Response) => {
@@ -18,7 +23,7 @@ router.get("/id/:id", async (req: Request, res: Response) => {
 router.get("/email/:email", async (req: Request, res: Response) => {
   const email: string = decodeURIComponent(req.params.email);
   const user = await getUserByEmail(email);
-  res.send(user);
+  res.json({ message: "User Found", user });
 });
 
 export default router;

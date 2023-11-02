@@ -2,12 +2,15 @@ import { useState, useContext, useRef, useEffect } from "react";
 import { Task } from "../../types";
 import { AppContext } from "../../context";
 import { editTaskAPI, deleteTaskAPI } from "../../api";
+import Button from "../common/Button";
+import { toast } from "react-toastify";
 
 interface TaskProps {
   task: Task;
+  self?: boolean;
 }
 
-const Task: React.FC<TaskProps> = ({ task: taskProp }) => {
+const Task: React.FC<TaskProps> = ({ task: taskProp, self }) => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [task, setTask] = useState<Task>(taskProp);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -30,6 +33,7 @@ const Task: React.FC<TaskProps> = ({ task: taskProp }) => {
   const handleDelete = async () => {
     const res = await deleteTaskAPI(task._id.toString());
     if (res.message === "Task deleted") {
+      toast.success("Task deleted");
       const newTasks = appState.tasks.filter(
         (appTask: Task) => appTask._id !== task._id
       );
@@ -38,13 +42,14 @@ const Task: React.FC<TaskProps> = ({ task: taskProp }) => {
   };
 
   const handleCheck = async () => {
-    await submitEdit({ ...task, completed: !task.completed });
+    await submitEdit({ ...task, completed: !task.completed }, true);
   };
 
-  const submitEdit = async (task) => {
+  const submitEdit = async (task, isCheck = false) => {
     if (!task.title) handleDelete();
     const res = await editTaskAPI(task);
     if (res.task) {
+      if (!isCheck) toast.success(res.message);
       setTask(res.task);
     }
     setIsEditing(false);
@@ -53,8 +58,13 @@ const Task: React.FC<TaskProps> = ({ task: taskProp }) => {
   if (!task) return;
 
   return (
-    <div>
-      <input type="checkbox" checked={task.completed} onChange={handleCheck} />
+    <div className="task">
+      <input
+        type="checkbox"
+        disabled={!self}
+        checked={task.completed}
+        onChange={handleCheck}
+      />
       {isEditing ? (
         <form
           onSubmit={(e) => {
@@ -67,9 +77,18 @@ const Task: React.FC<TaskProps> = ({ task: taskProp }) => {
       ) : (
         <span>{task.title}</span>
       )}
-      <button onClick={handleEditClick}>✏️</button>
 
-      <button onClick={handleDelete}>🗑️</button>  
+      {self && (
+        <div className="button-container">
+          <Button onClick={handleEditClick}>
+            <i className="fa-solid fa-pen-to-square" />
+          </Button>
+
+          <Button onClick={handleDelete}>
+            <i className="fa-solid fa-trash" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

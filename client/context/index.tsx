@@ -1,6 +1,7 @@
 import { createContext, useState } from "react";
 import { appStateType } from "../types";
 export const AppContext = createContext(null);
+export const SearchContext = createContext(null);
 
 function Context({ children }) {
   const [appState, setAppState] = useState<appStateType>({
@@ -9,10 +10,16 @@ function Context({ children }) {
     follows: null,
     loading: true,
   });
+  const [searchState, setSearchState] = useState({
+    user: null,
+    tasks: [],
+  });
 
   return (
     <AppContext.Provider value={{ appState, setAppState }}>
-      {children}
+      <SearchContext.Provider value={{ searchState, setSearchState }}>
+        {children}
+      </SearchContext.Provider>
     </AppContext.Provider>
   );
 }

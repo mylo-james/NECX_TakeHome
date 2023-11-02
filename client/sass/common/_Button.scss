@@ -1,0 +1,178 @@
+@keyframes Button-loading-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.Button {
+  @extend %control-size;
+  @include font-family;
+  padding: .5rem 1rem;
+  text-align: center;
+  font-weight: $font-weight-semi-bold;
+  white-space: nowrap;
+  cursor: pointer;
+  display: inline-block;
+  user-select: none;
+  appearance: none;
+  background: none;
+  border: none;
+  margin: 0;
+  position: relative;
+  outline: none;
+  transition: background-color $animation, color $animation, border $animation;
+
+  &:focus,
+  &:active {
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  &::before {
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  &::after {
+    content: "";
+    display: inline-block;
+    width: 0;
+    transition-property: width;
+    line-height: 1;
+  }
+
+  .Icon {
+    position: relative;
+    margin: -3px 0 0;
+    width: 12px;
+    height: 12px;
+  }
+}
+
+.Button-block {
+  display: block;
+  width: 100%;
+}
+
+.Button-with-icon-left {
+  .Icon {
+    margin-right: 5px;
+  }
+}
+
+.Button-with-icon-right {
+  .Icon {
+    margin-left: 5px;
+  }
+}
+
+.Button-primary {
+  background-color: $color-secondary;
+  color: $color-white;
+  border: 1px solid $color-secondary;
+
+  &:not([disabled]) {
+    &:hover,
+    &:focus {
+      background-color: $color-secondary-hover;
+      border-color: $color-secondary-hover;
+    }
+  }
+
+  &:disabled {
+    background-color: $color-n2;
+    color: $color-white;
+    border: 1px solid $color-n2;
+  }
+}
+
+.Button-secondary {
+  background-color: $color-white;
+  color: $color-secondary;
+  border: 1px solid $color-n2;
+
+  &:not([disabled]) {
+    &:hover {
+      border-color: $color-secondary;
+    }
+  }
+
+  &:disabled {
+    background-color: $color-n1;
+    color: $color-n3;
+    border: 1px solid $color-n2;
+  }
+}
+
+.Button-tertiary {
+  background-color: $color-white;
+  color: $color-n3;
+  border: 1px solid $color-n2;
+
+  &:not([disabled]) {
+    &:hover {
+      border-color: $color-secondary;
+    }
+  }
+
+  &:disabled {
+    background-color: $color-n1;
+    color: $color-n3;
+    border: 1px solid $color-n2;
+  }
+}
+
+.Button-loading {
+  position: relative;
+  pointer-events: none;
+  cursor: not-allowed;
+
+  &::before {
+    content: "";
+    position: absolute;
+    right: 0.5em;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 0.5em;
+    height: 0.5em;
+    border: 2px solid;
+    border-left-color: transparent;
+    border-radius: 50%;
+    opacity: 1;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-name: Button-loading-rotate;
+    animation-timing-function: linear;
+  }
+
+  &:not([disabled]) {
+    background-color: $color-n1;
+    color: $color-n3;
+    border: 1px solid $color-n2;
+    opacity: 0.8;
+  }
+
+  &.Button {
+    &::before {
+      border: 2px solid;
+      border-left-color: transparent;
+      right: 1.5em;
+      width: 1em;
+      height: 1em;
+      opacity: 1;
+    }
+
+    &::after {
+      transition-delay: 0;
+      width: 1em;
+    }
+  }
+}

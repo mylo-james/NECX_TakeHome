@@ -1,0 +1,39 @@
+.task {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid $color-n3;
+  border-radius: 5px;
+  padding: 0.5rem 2rem;
+  background-color: $color-n1;
+  width: 70vw;
+  max-width: 500px;
+  min-width: 300px;
+
+  input[type="checkbox"] {
+    margin: 1rem;
+    height: 15px;
+    width: 15px;
+    transform: scale(1.5);
+  }
+
+  span {
+    font-size: $font-size-md;
+    font-weight: 500;
+    color: #333;
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .button-container {
+    display: flex;
+    button {
+      margin-left: 1rem;
+      height: 30px;
+      width: 30px;
+      padding: 0;
+    }
+  }
+}

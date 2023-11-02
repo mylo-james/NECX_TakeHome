@@ -1,0 +1,25 @@
+
+
+body {
+  @include font-family;
+  @include font-size;
+  font-weight: $font-weight-normal;
+  background-color: $color-n1;
+  color: $color-primary;
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  max-width: $breakpoint-xl;
+  margin: 0 auto;
+}
+
+.Root-loader {
+  width: 100vw;
+  height: 100vh;
+
+  .Loader {
+    @include center;
+  }
+}

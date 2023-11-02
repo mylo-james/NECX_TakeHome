@@ -1,14 +1,26 @@
 import type { AppProps } from "next/app";
 import Context from "../context";
 import Init from "./_init";
-import Nav from "../components/nav";
+import "../sass/main.scss";
+import { ToastContainer } from "react-toastify";
+import SearchBar from "../components/searchBar";
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Context>
+        <ToastContainer
+          position="top-right"
+          autoClose={1500}
+          hideProgressBar={false}
+          newestOnTop={true}
+          closeOnClick
+          rtl={false}
+          theme="light"
+          limit={2}
+        />
         <Init />
-        <Nav />
+        <SearchBar />
         <Component {...pageProps} />
       </Context>
     </>

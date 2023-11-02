@@ -44,7 +44,6 @@ services:
       - "3000:3000"
     networks:
       - todo-network
-
 networks:
   todo-network:
     driver: bridge

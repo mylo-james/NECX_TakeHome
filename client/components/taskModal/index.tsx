@@ -1,6 +1,11 @@
 import { useState, useRef, useEffect, useContext } from "react";
 import { createTaskAPI } from "../../api";
 import { AppContext } from "../../context";
+import Button from "../common/Button";
+import TextButton from "../common/TextButton";
+import classNames from "classnames";
+import Modal from "../common/Modal/Modal";
+import { toast } from "react-toastify";
 
 interface TaskModalProps {
   onClose: () => void;
@@ -12,49 +17,20 @@ export default function TaskModal({ onClose }: TaskModalProps) {
     appState: { user },
     setAppState,
   } = useContext(AppContext);
-  const modalRef = useRef<HTMLDivElement>(null);
-  const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const cancelButtonRef = useRef<HTMLButtonElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  console.log(onClose);
-
-  useEffect(() => {
-    const modal = modalRef.current;
-    const closeButton = closeButtonRef.current;
-    const cancelButton = cancelButtonRef.current;
-    const input = inputRef.current;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
-      if (event.key === "Tab") {
-        if (document.activeElement === closeButton) {
-          event.preventDefault();
-          input.focus();
-        } else if (document.activeElement === cancelButton) {
-          event.preventDefault();
-          closeButton.focus();
-        } else {
-          event.preventDefault();
-          cancelButton.focus();
-        }
-      }
-    };
-
-    modal?.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      modal?.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [onClose]);
+  const modalRef = useRef(null);
+  const submitButtonRef = useRef(null);
+  const inputRef = useRef(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!title) {
+      toast.error("Please enter a title");
+      return;
+    }
     const { message, task } = await createTaskAPI({ title, user });
-    console.log(message);
+    toast.success(message);
     setTitle("");
-    setAppState((prevState) => ({
+    setAppState((prevState: any) => ({
       ...prevState,
       tasks: [task, ...prevState.tasks],
     }));
@@ -65,18 +41,9 @@ export default function TaskModal({ onClose }: TaskModalProps) {
     setTitle(event.target.value);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Escape") {
-      onClose();
-    }
-  };
-
   return (
-    <div className="modal" ref={modalRef} onKeyDown={handleKeyDown}>
-      <div className="modal-content">
-        <button className="close" onClick={onClose} ref={closeButtonRef}>
-          &times;
-        </button>
+    <div className="task-modal">
+      <Modal onClose={onClose} focusableRefs={[inputRef, submitButtonRef]}>
         <form onSubmit={handleSubmit}>
           <label htmlFor="title">Task Title:</label>
           <input
@@ -87,12 +54,11 @@ export default function TaskModal({ onClose }: TaskModalProps) {
             onChange={handleTitleChange}
             ref={inputRef}
           />
-          <button type="submit">Add Task</button>
-          <button type="button" onClick={onClose} ref={cancelButtonRef}>
-            Cancel
-          </button>
+          <Button ref={submitButtonRef} type="submit">
+            Add Task
+          </Button>
         </form>
-      </div>
+      </Modal>
     </div>
   );
 }

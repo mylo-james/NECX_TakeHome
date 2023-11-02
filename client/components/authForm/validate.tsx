@@ -1,10 +1,37 @@
+import { toast } from "react-toastify";
 import { IProps, FormValues } from "../../types";
+import * as Yup from "yup";
 
-const validatePassword = (password: string, reqs: string[]) => {
+export const registerValidationSchema = Yup.object().shape({
+  email: Yup.string()
+    .email("Please enter a valid email")
+    .required("Please enter an email"),
+  password: Yup.string()
+    .min(8, "Password must be at least 8 characters long")
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[a-zA-Z\d\W]{8,}$/,
+      "Password must meet all requirements below"
+    )
+    .required("Required"),
+  confirm: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Please confirm your password"),
+});
+
+export const loginValidationSchema = Yup.object().shape({
+  email: Yup.string()
+    .email("Please enter a valid email")
+    .required("Please enter an email"),
+  password: Yup.string().required("Please enter your password"),
+});
+
+const validatePassword = (
+  password: string,
+  reqs: string[],
+  errors,
+  register
+) => {
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)[a-zA-Z\d\W]{8,}$/;
-  if (!password) {
-    reqs.push("Please enter a password");
-  }
   if (password.length < 8) {
     reqs.push("Password must be at least 8 characters long");
   }
@@ -24,43 +51,18 @@ const validatePassword = (password: string, reqs: string[]) => {
   }
 };
 
-const validateEmail = (email: string, errors: Partial<FormValues>) => {
-  if (!email) {
-    errors.email = "Please enter an email";
-  } else if (!/\S+@\S+\.\S+/.test(email)) {
-    errors.email = "Please enter a valid email";
-  }
-};
-
-const validateConfirmPassword = (
-  confirmPassword: string,
-  password: string,
-  errors: Partial<FormValues>
-) => {
-  if (!confirmPassword) {
-    errors.confirmPassword = "Please confirm your password";
-  } else if (password !== confirmPassword) {
-    errors.confirmPassword = "Passwords do not match";
-  }
-};
-
 const validate = ({
   values,
-  register,
   setRequirements,
   focusField,
+  register,
 }: IProps): Partial<FormValues> => {
   const errors: Partial<FormValues> = {};
   const reqs: string[] = [];
-
-  validateEmail(values.email, errors);
-  validatePassword(values.password, reqs);
-
-  if (register)
-    validateConfirmPassword(values.confirmPassword, values.password, errors);
-
+  validatePassword(values.password, reqs, errors, register);
   focusField(errors);
   setRequirements(reqs);
+  if (Object.keys(errors).length) toast.error("Please fix the errors below");
   return errors;
 };
 

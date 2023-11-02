@@ -1,20 +1,16 @@
-import { useContext } from "react";
 import Task from "../task";
-import { AppContext } from "../../context";
-import { useRouter } from "next/router";
+import classNames from "classnames";
 
 interface TaskListProps {
   tasks: Task[];
+  self?: boolean;
 }
 
-
-const TaskList: React.FC<TaskListProps> = () => {
-  const { user, tasks } = useContext(AppContext).appState;
-  const { push } = useRouter();
+const TaskList: React.FC<TaskListProps> = ({ tasks, self = false }) => {
   return (
-    <div>
+    <div className={"task-list"}>
       {tasks.map((task) => (
-        <Task key={task._id} task={task} />
+        <Task key={task._id.toString()} self={self} task={task} />
       ))}
     </div>
   );

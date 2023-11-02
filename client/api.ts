@@ -1,4 +1,5 @@
 const backendUrl: string = process.env.NEXT_PUBLIC_BACKEND_URL!;
+import { toast } from "react-toastify";
 import { User, Task } from "./types";
 
 interface getAuthResponse {
@@ -15,11 +16,9 @@ export const getSessionAPI = async (): Promise<getAuthResponse> => {
     });
     if (res.status === 200) {
       const { message, user, tasks } = await res.json();
-      console.log(message);
       return { user, tasks, message };
     } else {
       const { message } = await res.json();
-      console.error(message);
       return { user: null, tasks: [], message };
     }
   } catch (e) {
@@ -180,5 +179,66 @@ export const deleteTaskAPI = async (
   } catch (e) {
     console.error(e);
     return { task: null, message: e.message };
+  }
+};
+
+interface getSearchedUsersResponse {
+  message: string;
+  users: Partial<User>[];
+}
+
+export const searchUsersAPI = async (
+  query: string
+): Promise<getSearchedUsersResponse> => {
+  const encodedQuery = encodeURIComponent(query);
+  try {
+    const res = await fetch(`${backendUrl}/users?searchTerm=${encodedQuery}`, {
+      method: "GET",
+      credentials: "include",
+    });
+    if (res.status === 200) {
+      const { message, users } = await res.json();
+      console.log(message);
+      return { users, message };
+    } else {
+      const { message } = await res.json();
+      console.error(message);
+      return { users: [], message };
+    }
+  } catch (e) {
+    console.error(e);
+    return { users: [], message: e.message };
+  }
+};
+
+interface getUserByIdResponse {
+  message: string;
+  user: {
+    email: string;
+    tasks: Task[];
+  };
+}
+
+export const getUserByEmailAPI = async (
+  email: string
+): Promise<getUserByIdResponse> => {
+  try {
+    const res = await fetch(`${backendUrl}/users/email/${email}`, {
+      method: "GET",
+      credentials: "include",
+    });
+    console.log(res);
+    if (res.status === 200) {
+      const { message, user } = await res.json();
+      console.log(user, message);
+      return { user, message };
+    } else {
+      const { message } = await res.json();
+      console.error(message);
+      return { user: null, message };
+    }
+  } catch (e) {
+    console.error(e);
+    return { user: null, message: e.message };
   }
 };

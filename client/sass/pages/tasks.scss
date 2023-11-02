@@ -1,0 +1,51 @@
+.tasks-page {
+  max-width: 1200px;
+  margin: 60px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  background-color: $color-n2;
+  display: flex;
+  align-items: center;
+
+  .add-task-button {
+    position: absolute;
+    top: 72px;
+    right: 30px;
+  }
+
+  .sign-out-button {
+    position: absolute;
+    top: 72px;
+    left: 30px;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  label {
+    font-size: $font-size-md;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+
+    &:focus {
+      outline: none;
+      border-color: #0070f3;
+      box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.3);
+    }
+  }
+}

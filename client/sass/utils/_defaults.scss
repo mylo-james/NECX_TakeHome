@@ -1,0 +1,42 @@
+$animation-transition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+$animation: 0.2s $animation-transition;
+
+$breakpoint-sm: 480px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1025px;
+$breakpoint-xl: 1440px;
+
+$color-primary: #3581b8;
+$color-secondary: #73ba9b;
+$color-secondary-hover: #003e1f;
+$color-tertiary: #090c9b;
+$color-link: #1a293b;
+$color-warn: #f9a825;
+$color-error: #ed3354;
+$color-n1: #f6f7f9;
+$color-n2: #cbd4de;
+$color-n3: #5c7996;
+$color-white: #ffffff;
+$color-black: #01110a;
+$color-highlight: #faf33e;
+
+$font-size-xs: 0.5;
+$font-size-sm: 1.2;
+$font-size-md: 1.4;
+
+$font-weight-normal: 400;
+$font-weight-semi-bold: 600;
+$font-weight-bold: 700;
+
+$z-index-negative: -100;
+$z-index-back: 0;
+$z-index-mid: 100;
+$z-index-fore: 200;
+$z-index-layer1: 300;
+$z-index-layer2: 400;
+$z-index-layer3: 500;
+$z-index-layer4: 600;
+$z-index-modal-shim: 700;
+$z-index-modal: 800;
+$z-index-notification: 900;
+$z-index-top: 1000;

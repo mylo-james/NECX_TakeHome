@@ -1,0 +1,93 @@
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  
+
+  .passwordContainer,
+  .emailContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+
+    .password,
+    .email,
+    .confirm {
+      width: 100%;
+      margin-bottom: 10px;
+
+      .reqList {
+        margin-top: 10px;
+        padding-left: 20px;
+        list-style: disc;
+        font-size: 14px;
+        color: #333;
+
+        .req {
+          margin-bottom: 5px;
+        }
+      }
+    }
+  }
+
+  button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #0070f3;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #0062cc;
+    }
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+
+  .error-text {
+    margin-top: 5px;
+    height: 21px;
+    p {
+      margin: auto 0;
+      font-size: 14px;
+      color: #ff0000;
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+.change-button {
+  width: 100%;
+  margin: 10px auto;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0070f3;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

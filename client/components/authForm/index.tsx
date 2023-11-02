@@ -1,16 +1,31 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { Formik, Form, Field } from "formik";
-import validate from "./validate";
+import validate, {
+  registerValidationSchema,
+  loginValidationSchema,
+} from "./validate";
 import { loginAPI, registerAPI } from "../../api";
 import { AppContext } from "../../context";
 import { AuthFormProps, FormValues } from "../../types";
+import Button from "../common/Button";
+import TextButton from "../common/TextButton";
+import Modal from "../common/Modal/Modal";
+import PasswordInput, {
+  PasswordInputRef,
+} from "../common/PasswordInput/PasswordInput";
+import classNames from "classnames";
+import { toast } from "react-toastify";
 
-const AuthForm: React.FC<AuthFormProps> = ({ register, setRegister }) => {
+const AuthForm: React.FC<AuthFormProps> = ({
+  register,
+  setRegister,
+  onClose,
+}) => {
   const initialValues: FormValues = {
     email: "",
     password: "",
-    confirmPassword: "",
+    confirm: "",
   };
 
   const { push } = useRouter();
@@ -21,13 +36,17 @@ const AuthForm: React.FC<AuthFormProps> = ({ register, setRegister }) => {
     "Password must contain at least one number",
     "Password must contain at least one special character",
   ]);
-  const [showPassword, setShowPassword] = useState(false);
+  const [focusableRefs, setFocusableRefs] = useState<React.RefObject<any>[]>(
+    []
+  );
   const { setAppState } = React.useContext(AppContext);
 
   const refs = {
     email: useRef<HTMLInputElement>(null),
-    password: useRef<HTMLInputElement>(null),
-    confirmPassword: useRef<HTMLInputElement>(null),
+    password: useRef<PasswordInputRef>(null),
+    confirmPassword: useRef<PasswordInputRef>(null),
+    submitButton: useRef<HTMLButtonElement>(null),
+    changeButton: useRef<HTMLButtonElement>(null),
   };
 
   const focusField = (errors) => {
@@ -37,16 +56,42 @@ const AuthForm: React.FC<AuthFormProps> = ({ register, setRegister }) => {
 
   const onSubmit = async ({ email, password }, { setSubmitting }) => {
     const api = register ? registerAPI : loginAPI;
-    const { user, tasks } = await api(email, password);
+    const { user, tasks, message } = await api(email, password);
+    toast(message)
     setAppState((appState) => ({ ...appState, user, tasks }));
     setSubmitting(false);
-    push("/tasks");
+    if (user) {
+      push("/tasks");
+    }
   };
 
+  const generateFocusableRefs = () => {
+    const focusableRefs: any[] = [
+      refs.email,
+      refs.password.current.passwordRef,
+      refs.password.current.showRef,
+    ];
+    if (register) {
+      focusableRefs.push(refs.confirmPassword.current.passwordRef);
+      focusableRefs.push(refs.confirmPassword.current.showRef);
+    }
+    focusableRefs.push(refs.submitButton);
+    focusableRefs.push(refs.changeButton);
+    return focusableRefs;
+  };
+
+  useEffect(() => {
+    refs.email.current.focus();
+    setFocusableRefs(generateFocusableRefs());
+  }, [register]);
+
   return (
-    <>
+    <Modal onClose={onClose} focusableRefs={focusableRefs}>
       <Formik<FormValues>
         initialValues={initialValues}
+        validationSchema={
+          register ? registerValidationSchema : loginValidationSchema
+        }
         validate={(values) =>
           validate({
             values,
@@ -59,81 +104,77 @@ const AuthForm: React.FC<AuthFormProps> = ({ register, setRegister }) => {
         validateOnChange={false}
         validateOnBlur={false}
       >
-        {({
-          isSubmitting,
-          errors,
-          touched,
-          handleChange,
-          validateField,
-        }) => (
-          <Form noValidate>
-            <div>
-              <label htmlFor="email">Email</label>
-              <Field
-                type="email"
-                name="email"
-                id="email"
-                innerRef={refs.email}
-              />
-              {errors.email && touched.email ? <div>{errors.email}</div> : null}
-            </div>
-
-            <div>
-              <label htmlFor="password">Password</label>
-              <Field
-                type={showPassword ? "text" : "password"}
-                name="password"
-                id="password"
-                innerRef={refs.password}
-                onChange={(e) => {
-                  handleChange(e);
-                  validateField("password");
-                }}
-              />
-              {register && requirements.length > 0 && (
-                <ul>
-                  {requirements.map((requirement) => (
-                    <li key={requirement}>{requirement}</li>
-                  ))}
-                </ul>
-              )}
-              {errors.password && touched.password && (
-                <div className={register ? "hidden" : "error-text"}>
-                  {errors.password}
-                </div>
-              )}
-            </div>
-
-            {register && (
-              <div>
-                <label htmlFor="confirmPassword">Confirm Password</label>
+        {({ isSubmitting, errors, touched, values, setFieldValue }) => (
+          <Form noValidate className={classNames("auth-form")}>
+            <div className={classNames("emailContainer")}>
+              <div className="email">
+                <label htmlFor="email">Email</label>
                 <Field
-                  type={showPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  id="confirmPassword"
-                  innerRef={refs.confirmPassword}
+                  type="email"
+                  name="email"
+                  id="email"
+                  innerRef={refs.email}
                 />
-                {errors.confirmPassword && touched.confirmPassword && (
-                  <div className="error-text">{errors.confirmPassword}</div>
+                <div className={classNames("error-text")}>
+                  {errors.email && touched.email ? <p>{errors.email}</p> : null}
+                </div>
+              </div>
+            </div>
+
+            <div className={classNames("passwordContainer")}>
+              <div className={classNames("password")}>
+                <PasswordInput
+                  value={values.password}
+                  onChange={(value) => setFieldValue("password", value)}
+                  label="Password"
+                  error={errors.password}
+                  touched={touched.password}
+                  ref={refs.password}
+                />
+                {register && requirements.length > 0 && (
+                  <ul className={classNames("reqList")}>
+                    {requirements.map((requirement) => (
+                      <li className={classNames("req")} key={requirement}>
+                        {requirement}
+                      </li>
+                    ))}
+                  </ul>
                 )}
               </div>
-            )}
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
+
+              {register && (
+                <PasswordInput
+                  value={values.confirm}
+                  onChange={(value) => setFieldValue("confirm", value)}
+                  label="Confirm"
+                  error={errors.confirm}
+                  touched={touched.confirm}
+                  ref={refs.confirmPassword}
+                />
+              )}
+            </div>
+
+            <Button
+              ref={refs.submitButton}
+              type="submit"
+              disabled={isSubmitting}
+              className="submit-button"
             >
-              {showPassword ? "Hide" : "Show"}
-            </button>
-            <button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Submitting..." : "Submit"}
-            </button>
+            </Button>
           </Form>
         )}
       </Formik>
-      <button onClick={() => setRegister(!register)}>
-        {register ? "I already have an account" : "I need an account"}
-      </button>
-    </>
+      <div className="change-button">
+        <TextButton
+          ref={refs.changeButton}
+          onClick={() => setRegister(!register)}
+          className={"change-button"}
+        >
+          {register ? "I already have an account" : "I need an account"}
+        </TextButton>
+      </div>
+    </Modal>
   );
 };
 

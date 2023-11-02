@@ -5,7 +5,6 @@ import { ObjectId } from "mongodb";
 import { createSession } from "./utils";
 import { Session, User } from "../../types";
 
-
 const router = express.Router();
 
 /**
@@ -14,19 +13,19 @@ const router = express.Router();
 router.post("/login", async (req: Request, res: Response) => {
   const db = await dbPromise;
   const { email, password } = req.body as { email: string; password: string };
-  console.log(email, password);
 
   // Check if user exists
-  const user: User | null = await db.collection("users").findOne({ email }) as User | null;
-  console.log(user);
+  const user: User | null = (await db
+    .collection("users")
+    .findOne({ email })) as User | null;
   if (!user) {
-    return res.status(401).json({ message: "Invalid email" });
+    return res.status(401).json({ message: "Invalid email or password" });
   }
 
   // Check if password is correct
   const isPasswordCorrect = await bcrypt.compare(password, user.pwHash);
   if (!isPasswordCorrect) {
-    return res.status(401).json({ message: "Invalid password" });
+    return res.status(401).json({ message: "Invalid email or password" });
   }
 
   // Create session
@@ -45,13 +44,11 @@ router.post("/login", async (req: Request, res: Response) => {
 router.post("/register", async (req: Request, res: Response) => {
   const db = await dbPromise;
   const { email, password } = req.body as { email: string; password: string };
-  console.log(email, password);
 
   // Check if the user already exists
-  const existingUser: User | null = await db
+  const existingUser: User | null = (await db
     .collection("users")
-    .findOne({ email }) as User | null;
-  console.log(existingUser);
+    .findOne({ email })) as User | null;
   if (existingUser) {
     return res.status(400).json({ message: "User already exists" });
   }
@@ -80,12 +77,11 @@ router.post("/check-session", async (req: Request, res: Response) => {
   const db = await dbPromise;
   const sessionId = req?.cookies?.sessionId;
   // Check if session exists
-  const session: Session | null = await db
+  const session: Session | null = (await db
     .collection("sessions")
-    .findOne({ _id: new ObjectId(sessionId) }) as Session | null;
-  console.log(session);
+    .findOne({ _id: new ObjectId(sessionId) })) as Session | null;
   if (!session) {
-    return res.status(401).json({ message: "Invalid session ID" });
+    return res.status(401).json({ message: "Please Login or Register" });
   }
 
   // Check if session is expired
@@ -94,7 +90,7 @@ router.post("/check-session", async (req: Request, res: Response) => {
     session.userAgent !== req.headers["user-agent"]
   ) {
     await db.collection("sessions").deleteOne({ _id: new ObjectId(sessionId) });
-    return res.status(401).json({ message: "Session expired" });
+    return res.status(401).json({ message: "Please Login or Register" });
   }
 
   // Refresh session expiresAt
@@ -113,17 +109,17 @@ router.post("/check-session", async (req: Request, res: Response) => {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
   });
 
-  const user: User | null = await db
+  const user: User | null = (await db
     .collection("users")
-    .findOne({ _id: session.userId }) as User | null;
+    .findOne({ _id: session.userId })) as User | null;
   if (!user) {
-    return res.status(401).json({ message: "User not found" });
+    return res.status(401).json({ message: "Error: Please Try Again Later" });
   }
   const tasks =
     (await db.collection("tasks").find({ userId: session.userId }).toArray()) ||
     [];
 
-  return res.json({ message: "Session valid", user: user, tasks: tasks });
+  return res.json({ message: "Logged In", user: user, tasks: tasks });
 });
 
 /**
@@ -134,7 +130,7 @@ router.post("/signout", async (req: Request, res: Response) => {
   const sessionId = req?.cookies?.sessionId;
   res.clearCookie("sessionId");
   if (!sessionId) {
-    return res.status(401).json({ message: "No session ID found, signed out" });
+    return res.status(401).json({ message: "Signed out successfully" });
   }
 
   await db.collection("sessions").deleteOne({ _id: new ObjectId(sessionId) });

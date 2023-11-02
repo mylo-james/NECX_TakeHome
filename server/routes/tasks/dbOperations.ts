@@ -27,7 +27,9 @@ export const getUserCollection = async (): Promise<Collection<User>> => {
  */
 export const getTasksByUserId = async (userId: ObjectId): Promise<Task[]> => {
   const tasksCollection = await getTasksCollection();
-  return tasksCollection.find({ userId }).toArray();
+  return tasksCollection
+    .find({ userId }, { projection: { title: 1, completed: 1 } })
+    .toArray();
 };
 
 /**

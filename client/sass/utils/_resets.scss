@@ -1,0 +1,52 @@
+* {
+  box-sizing: border-box;
+
+  &::before,
+  &::after {
+    box-sizing: border-box;
+  }
+}
+
+audio,
+canvas,
+img,
+svg,
+video {
+  vertical-align: middle;
+}
+
+p,
+ol,
+ul,
+blockquote,
+figure {
+  margin: 0;
+  padding: 0;
+}
+
+fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  position: fixed;
+}
+
+.Toastify__toast-container {
+  z-index: 9999;
+  --toastify-color-progress-light: #0070f3;
+}
+
+#__next {
+  background-color: $color-n2;
+  padding: 0;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.5;
+  margin: 0;
+}

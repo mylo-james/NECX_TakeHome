@@ -26,18 +26,19 @@ export interface contextType {
 export interface FormValues {
   email: string;
   password: string;
-  confirmPassword?: string;
+  confirm?: string;
 }
 
 export interface AuthFormProps {
   register: boolean;
   setRegister: (register: boolean) => void;
+  onClose: () => void;
 }
 
 export interface IValues {
   email: string;
   password: string;
-  confirmPassword?: string;
+  confirm?: string;
 }
 
 export interface IProps {
