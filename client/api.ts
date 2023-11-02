@@ -1,4 +1,5 @@
-const backendUrl: string = process.env.NEXT_PUBLIC_BACKEND_URL!;
+const backendUrl: string =
+  process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5050";
 import { toast } from "react-toastify";
 import { User, Task } from "./types";
 
