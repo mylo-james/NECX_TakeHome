@@ -7,6 +7,7 @@ export interface Session extends WithId<Document> {
 }
 
 export interface User extends WithId<Document> {
+  _id: ObjectId;
   email: string;
   pwHash: string;
 }
